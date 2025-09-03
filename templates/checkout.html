@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-800 border-b pb-4 mb-4">Your Order Summary</h2>
+        <div class="space-y-4">
+            {% for item in cart_products %}
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">{{ item.product.name }}</p>
+                    <p class="text-sm text-gray-500">Quantity: {{ item.quantity }}</p>
+                </div>
+                <p class="font-semibold">₹{{ "%.2f"|format(item.subtotal) }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="border-t mt-4 pt-4">
+            <div class="flex justify-between font-bold text-xl">
+                <span>Total</span>
+                <span>₹{{ "%.2f"|format(total_price) }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-800 border-b pb-4 mb-4">Shipping Information</h2>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div class="mb-6">
+                <label for="address" class="block text-gray-700 text-sm font-bold mb-2">Delivery Address</label>
+                {{ form.address(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 h-24 leading-tight focus:outline-none focus:shadow-outline", id="address") }}
+            </div>
+            {{ form.submit(class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer text-lg") }}
+        </form>
+    </div>
+</div>
+{% endblock content %}

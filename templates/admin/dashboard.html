@@ -1,0 +1,90 @@
+<!-- templates/admin/dashboard.html -->
+
+{% extends "admin/layout.html" %}
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Total Revenue -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-600">Total Revenue</h3>
+        <p class="text-3xl font-bold text-gray-900 mt-2">₹{{ "%.2f"|format(stats.total_revenue or 0) }}</p>
+    </div>
+    <!-- Pending Orders -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-600">Pending Orders</h3>
+        <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.pending_orders }}</p>
+    </div>
+    <!-- Total Customers -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-semibold text-gray-600">Total Customers</h3>
+        <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.total_customers }}</p>
+    </div>
+</div>
+
+<!-- THIS IS THE NEW SALES GRAPH SECTION -->
+<div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">Sales in the Last 7 Days</h3>
+    <div>
+        <!-- The chart will be drawn on this canvas element -->
+        <canvas id="salesChart"></canvas>
+    </div>
+</div>
+
+<!-- 1. Include the Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- 2. JavaScript to fetch data and create the chart -->
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        // Fetch sales data from our new Flask route
+        const response = await fetch("{{ url_for('get_sales_data') }}");
+        const salesData = await response.json();
+
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        
+        const salesChart = new Chart(ctx, {
+            type: 'line', // Type of chart
+            data: {
+                labels: salesData.labels, // Dates for the X-axis
+                datasets: [{
+                    label: 'Daily Sales (₹)',
+                    data: salesData.data, // Sales amounts for the Y-axis
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            // Format the Y-axis labels to include the Rupee symbol
+                            callback: function(value, index, values) {
+                                return '₹' + value;
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            // Format the tooltip that appears on hover
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += '₹' + context.parsed.y;
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock content %}

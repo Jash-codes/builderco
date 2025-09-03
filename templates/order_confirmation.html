@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="bg-white p-8 rounded-lg shadow-lg text-center max-w-2xl mx-auto">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <h2 class="text-3xl font-bold text-gray-800 mb-2">Thank You For Your Order!</h2>
+    <p class="text-gray-600 mb-6">Your order has been placed successfully. Your invoice is detailed below.</p>
+    
+    <div class="text-left border-t border-b py-4 my-6">
+        <h3 class="text-xl font-semibold mb-4">Order #{{ order.id }}</h3>
+        <div class="space-y-2">
+            {% for item in order.items %}
+            <div class="flex justify-between">
+                <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+                <span>₹{{ "%.2f"|format(item.product.price * item.quantity) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="flex justify-between font-bold text-lg border-t mt-4 pt-2">
+            <span>Total</span>
+            <span>₹{{ "%.2f"|format(order.total_price) }}</span>
+        </div>
+    </div>
+    
+    <a href="{{ url_for('home') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">Continue Shopping</a>
+</div>
+{% endblock content %}

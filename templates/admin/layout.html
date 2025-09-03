@@ -1,0 +1,56 @@
+<!-- templates/admin/layout.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - {{ title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style> body { font-family: 'Inter', sans-serif; } </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen bg-gray-200">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 text-white flex flex-col">
+            <div class="px-8 py-6 border-b border-gray-700">
+                <h2 class="text-2xl font-bold">Builder<span class="text-blue-500">co</span> Admin</h2>
+            </div>
+            <nav class="flex-grow">
+                <a href="{{ url_for('admin_dashboard') }}" class="block px-8 py-4 hover:bg-gray-700">Dashboard</a>
+                <a href="{{ url_for('admin_orders') }}" class="block px-8 py-4 hover:bg-gray-700">Orders</a>
+                <a href="{{ url_for('admin_inventory') }}" class="block px-8 py-4 hover:bg-gray-700">Inventory</a>
+                <!-- THIS LINK IS NOW ACTIVE -->
+                <a href="{{ url_for('admin_workers') }}" class="block px-8 py-4 hover:bg-gray-700">Workers</a>
+            </nav>
+            <div class="px-8 py-4 border-t border-gray-700">
+                 <a href="{{ url_for('home') }}" class="block text-center text-sm hover:text-blue-400">← Back to Main Site</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow flex justify-between items-center px-6 py-4">
+                <h1 class="text-xl font-semibold">{{ title }}</h1>
+                <div>
+                    <span class="mr-4">Welcome, {{ current_user.username }}</span>
+                    <a href="{{ url_for('logout') }}" class="text-blue-600 hover:underline">Logout</a>
+                </div>
+            </header>
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                 {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="p-4 mb-4 text-sm rounded-lg {{ 'bg-green-100 text-green-800' if category == 'success' else 'bg-red-100 text-red-800' }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+</body>
+</html>

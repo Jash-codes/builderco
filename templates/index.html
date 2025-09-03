@@ -1,0 +1,41 @@
+<!-- templates/index.html -->
+
+{% extends "layout.html" %}
+{% block content %}
+    <!-- Hero Section -->
+    <section class="bg-blue-600 text-white py-20 rounded-lg shadow-xl text-center">
+        <div class="container mx-auto">
+            <h1 class="text-5xl font-extrabold mb-4">Building Your Future, Together</h1>
+            <p class="text-xl mb-8">The highest quality construction materials, delivered right to your site.</p>
+            <a href="#products" class="bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-blue-100 transition duration-300">Shop Our Materials</a>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-16">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-bold text-center text-gray-800 mb-10">Our Materials</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for product in products %}
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+                    <img src="{{ url_for('static', filename='images/' + product.image_file) }}" alt="{{ product.name }}" class="w-full h-56 object-cover">
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ product.name }}</h3>
+                        <p class="text-gray-600 mb-4 flex-grow">{{ product.description }}</p>
+                        <div class="mt-auto">
+                            <div class="flex justify-between items-center">
+                                <span class="text-3xl font-bold text-blue-600">₹{{ "%.2f"|format(product.price) }}</span>
+                                <!-- Add to Cart Form -->
+                                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">Add to Cart</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock content %}
